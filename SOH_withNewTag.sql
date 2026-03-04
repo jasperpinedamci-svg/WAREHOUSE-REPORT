@@ -1,10 +1,3 @@
--- new Tagging--
-             left join "@BUSLINE" Q on a."U_BUSLINE" = Q."Code"
-             left join "@APLINE" R on a."U_APLINE" = R."Code"
-             left join "@PRODLINE" S on a."U_PRODLINE" = S."Code"
-             left join "@DESLINE" T on a."U_DESLINE" = T."Code"
-             left join "@ITEMSTAT" V on a."U_ITEMSTAT" = V."Code"
-
 /* select from oinm t0 */
 declare DF date;
 DF := /* t0."DocDate" */ '[%0]';
@@ -12,7 +5,7 @@ DF := /* t0."DocDate" */ '[%0]';
 Select
       *	
     , CASE WHEN T0."IsSUD" = 1 THEN 0 ELSE (Select "AvgPrice" From OITM Where "ItemCode" = T0."ItemCode")  END AS "Unit LC"	
-   , CASE WHEN T0."IsSUD" = 1 THEN 0 ELSE (Select "AvgPrice" From OITM Where "ItemCode" = T0."ItemCode") * T0."Qty" END AS "Total LC"	
+    , CASE WHEN T0."IsSUD" = 1 THEN 0 ELSE (Select "AvgPrice" From OITM Where "ItemCode" = T0."ItemCode") * T0."Qty" END AS "Total LC"	
     , CASE WHEN T0."IsSUD" = 1 THEN 0 ELSE (Select "Price" From ITM1 Where "ItemCode" = T0."ItemCode" AND "PriceList" = 2) END AS "SRP"	
     , T0."WhsCode" || ' ' || T0."WhsName" "Location"
 
@@ -32,6 +25,13 @@ Select
     , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."AL" ELSE A5."Name" END AS "AppLine"
     , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."CAT" ELSE A6."Name" END AS "Category"
     , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."MOD" ELSE A3."U_MODEL" END AS "Model"
+  --New Tagging
+    , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."NBL" ELSE A7."Name" END AS "New_BussLine"
+    , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."NAL" ELSE A9."Name" END AS "New_AppLine"
+    , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."PROD" ELSE A10."Name" END AS "New_ProdLine"
+    , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."DES" ELSE A11."Name" END AS "New_Des"
+    , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."STAT" ELSE A12."Name" END AS "New_ItemStat"
+
     , A0."U_DRNO"
     , A0."U_INDATE"
     , A0."U_CUSTNAME"
@@ -59,7 +59,13 @@ From
             B2."Name" "BL",
             B3."Name" "AL",
             B4."Name" "CAT",
-            B1."U_MODEL" "MOD",      
+            B1."U_MODEL" "MOD",   
+  --NEW
+            B5."Name" "NBL",
+            B6."Name" "NAL",
+            B7."Name" "PROD",
+            B8."Name" "DES",
+            B9."Name" "STAT",
             A0."AbsEntry" AS "SnAbsEntry"
         FROM        
             OSRN A0 
@@ -67,11 +73,24 @@ From
             LEFT JOIN "@BUSSLINE" B2 ON B1."U_BUSSLINE" = B2."Code"
             LEFT JOIN "@APPLINE" B3 ON B1."U_APPLINE" = B3."Code"
             LEFT JOIN "@CATEGORY_1" B4 ON B1."U_CATEGORY_1" = B4."Code"
+            -- new Tagging--
+                 LEFT JOIN "@BUSLINE" B5 on B1."U_BUSLINE" = B5."Code"
+                 LEFT JOIN "@APLINE" B6 on B1."U_APLINE" = B6."Code"
+                 LEFT JOIN "@PRODLINE" B7 on B1."U_PRODLINE" = B7."Code"
+                 LEFT JOIN "@DESLINE" B8 on B1."U_DESLINE" = B8."Code"
+                 LEFT JOIN "@ITEMSTAT" B9 on B1."U_ITEMSTAT" = B9."Code"
     ) D0 ON D0."SnAbsEntry" = A0."AbsEntry"
     
     LEFT JOIN "@BUSSLINE" A4 ON A3."U_BUSSLINE" = A4."Code"
     LEFT JOIN "@APPLINE" A5 ON A3."U_APPLINE" = A5."Code"
     LEFT JOIN "@CATEGORY_1" A6 ON A3."U_CATEGORY_1" = A6."Code"
+    -- new Tagging--
+    LEFT JOIN "@BUSLINE" A7 on A3."U_BUSLINE" = A7."Code"
+    LEFT JOIN "@APLINE" A9 on A3."U_APLINE" = A9."Code"
+    LEFT JOIN "@PRODLINE" A10 on A3."U_PRODLINE" = A10."Code"
+    LEFT JOIN "@DESLINE" A11 on A3."U_DESLINE" = A11."Code"
+    LEFT JOIN "@ITEMSTAT" A12 on A3."U_ITEMSTAT" = A12."Code"
+  
 
 Where
     A2."DocDate" <= :DF
@@ -97,10 +116,18 @@ Group By
     D0."AL", 
     D0."CAT", 
     D0."MOD",
+  
+    D0."NBL",
+    D0."NAL",
+    D0."PROD",
+    D0."DES",
+    D0."STAT",
+  
     A0."U_DRNO", 
     A0."U_INDATE", 
     A0."U_CUSTNAME"
 
+  
 Having
     SUM(A1."Quantity") > 0
 
@@ -119,6 +146,13 @@ Select
     , A4."Name" "BussLine"
     , A5."Name" "AppLine"
     , A6."Name" "Category"
+  
+    , A7."Name" "New_BusLine"
+    , A9."Name" "New_ApLine"
+    , A10."Name" "New_ProdLine"
+    , A11."Name" "New_DesLine"
+    , A12."Name" "New_ItemStat"
+  
     , A1."U_MODEL" "Model"
     , NULL
     , NULL
@@ -129,8 +163,15 @@ From
     OINM A0 
     INNER JOIN OITM A1 ON A0."ItemCode" = A1."ItemCode"
     LEFT JOIN "@BUSSLINE" A4 ON A1."U_BUSSLINE" = A4."Code"
-    LEFT JOIN "@APPLINE" A5 ON A1."U_APPLINE" = A5."Code" -- FIXED ALIAS HERE
+    LEFT JOIN "@APPLINE" A5 ON A1."U_APPLINE" = A5."Code" 
     LEFT JOIN "@CATEGORY_1" A6 ON A1."U_CATEGORY_1" = A6."Code"
+
+  -- new Tagging--
+    LEFT JOIN "@BUSLINE" A7 on A3."U_BUSLINE" = A7."Code"
+    LEFT JOIN "@APLINE" A9 on A3."U_APLINE" = A9."Code"
+    LEFT JOIN "@PRODLINE" A10 on A3."U_PRODLINE" = A10."Code"
+    LEFT JOIN "@DESLINE" A11 on A3."U_DESLINE" = A11."Code"
+    LEFT JOIN "@ITEMSTAT" A12 on A3."U_ITEMSTAT" = A12."Code"
 
 Where
     A1."ManSerNum" = 'N'
@@ -143,6 +184,11 @@ Group By
     A4."Name", 
     A5."Name", 
     A6."Name", 
+    A7."Name", 
+    A9."Name", 
+    A10."Name", 
+    A11."Name", 
+    A12."Name", 
     A1."U_MODEL" 
 
 Having 
