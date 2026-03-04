@@ -1,7 +1,3 @@
-/* select from oinm t0 */
-declare DF date;
-DF := /* t0."DocDate" */ '[%0]';
-
 Select
       *	
     , CASE WHEN T0."IsSUD" = 1 THEN 0 ELSE (Select "AvgPrice" From OITM Where "ItemCode" = T0."ItemCode")  END AS "Unit LC"	
@@ -93,7 +89,7 @@ From
   
 
 Where
-    A2."DocDate" <= :DF
+    A2."DocDate" <= '20260304'
     AND A3."ItmsGrpCod" = 156 
 
 Group By
@@ -108,6 +104,11 @@ Group By
     A4."Name", 
     A5."Name", 
     A6."Name",
+    A7."Name", 
+    A9."Name", 
+    A10."Name", 
+    A11."Name", 
+    A12."Name", 
     A3."U_MODEL",
     A0."U_ITEMCODE", 
     D0."ItemName", 
@@ -167,16 +168,16 @@ From
     LEFT JOIN "@CATEGORY_1" A6 ON A1."U_CATEGORY_1" = A6."Code"
 
   -- new Tagging--
-    LEFT JOIN "@BUSLINE" A7 on A3."U_BUSLINE" = A7."Code"
-    LEFT JOIN "@APLINE" A9 on A3."U_APLINE" = A9."Code"
-    LEFT JOIN "@PRODLINE" A10 on A3."U_PRODLINE" = A10."Code"
-    LEFT JOIN "@DESLINE" A11 on A3."U_DESLINE" = A11."Code"
-    LEFT JOIN "@ITEMSTAT" A12 on A3."U_ITEMSTAT" = A12."Code"
+    LEFT JOIN "@BUSLINE" A7 on A1."U_BUSLINE" = A7."Code"
+    LEFT JOIN "@APLINE" A9 on A1."U_APLINE" = A9."Code"
+    LEFT JOIN "@PRODLINE" A10 on A1."U_PRODLINE" = A10."Code"
+    LEFT JOIN "@DESLINE" A11 on A1."U_DESLINE" = A11."Code"
+    LEFT JOIN "@ITEMSTAT" A12 on A1."U_ITEMSTAT" = A12."Code"
 
 Where
     A1."ManSerNum" = 'N'
     AND A1."ItmsGrpCod" = 156 
-    AND A0."DocDate" <= :DF
+    AND A0."DocDate" <= '20260304'
 
 Group By
     A0."ItemCode", 
