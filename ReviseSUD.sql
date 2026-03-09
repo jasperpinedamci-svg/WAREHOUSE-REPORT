@@ -25,6 +25,7 @@ Select
     , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."AL" ELSE A5."Name" END AS "AppLine"
     , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."CAT" ELSE A6."Name" END AS "Category"
     , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."MOD" ELSE A3."U_MODEL" END AS "Model"
+    , A0."U_SINO"
     , A0."U_DRNO"
     , A0."U_INDATE"
     , A0."U_CUSTNAME"
@@ -74,6 +75,7 @@ From
 
 Where
     A0."InDate" <= :DF
+    AND A0."ItemCode" = 'SUD'
     AND A3."ItmsGrpCod" = 156 
 
 Group By
@@ -89,6 +91,7 @@ Group By
     A5."Name", 
     A6."Name",
     A3."U_MODEL",
+    A0."U_SINO",
     A0."U_ITEMCODE", 
     D0."ItemName", 
     A3."ItemCode", 
@@ -122,6 +125,7 @@ Select
     , NULL
     , NULL
     , NULL
+    , NULL
     , 0 AS "IsSUD"  
     , NULL
     , NULL
@@ -140,6 +144,7 @@ From
 Where
     A1."ManSerNum" = 'N'
     AND A1."ItmsGrpCod" = 156 
+    AND A0."ItemCode" = 'SUD'
     AND A0."DocDate" <= :DF
 
 Group By
