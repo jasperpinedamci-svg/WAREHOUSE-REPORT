@@ -29,6 +29,10 @@ Select
     , A0."U_DRNO"
     , A0."U_INDATE"
     , A0."U_CUSTNAME"
+	, S0."GL"
+	, S0."Sales Type"
+	, S0."SalesLoc"
+	, S0."SalesEmployee"
     , CASE WHEN A0."ItemCode" = 'SUD' THEN 1 ELSE  0  END AS "IsSUD"
     , DAYS_BETWEEN(A0."InDate", :DF) AS "AGE_Days"  
     , CASE WHEN DAYS_BETWEEN(A0."InDate", :DF ) BETWEEN 0 AND 30 THEN 1 ELSE 0 END AS "0-30_Days"
@@ -72,7 +76,17 @@ From
     LEFT JOIN "@BUSSLINE" A4 ON A3."U_BUSSLINE" = A4."Code"
     LEFT JOIN "@APPLINE" A5 ON A3."U_APPLINE" = A5."Code"
     LEFT JOIN "@CATEGORY_1" A6 ON A3."U_CATEGORY_1" = A6."Code"
-
+	--Invoice details--
+	LEFT JOIN ( SELECT T0."DocNum" "SI2", 
+       T2."FormatCode" "GL",
+       T2."AcctName" "Sales Type" ,
+       T3."OcrName" "SalesLoc",
+       T4."SlpName" "SalesEmployee"
+	   FROM OINV T0  INNER JOIN INV1 T1 ON T0."DocEntry" = T1."DocEntry"
+	                 INNER JOIN OACT T2 ON T1."AcctCode" = T2."AcctCode"
+	                 INNER JOIN OOCR T3 ON T1."OcrCode3" = T3."OcrCode"
+	                 INNER JOIN OSLP T4 ON T0."SlpCode" = T4."SlpCode") S0 ON A0."U_SINO" = S0."SI2"
+	
 Where
     A0."InDate" <= :DF
     AND A0."ItemCode" = 'SUD'
@@ -101,7 +115,11 @@ Group By
     D0."MOD",
     A0."U_DRNO", 
     A0."U_INDATE", 
-    A0."U_CUSTNAME"
+    A0."U_CUSTNAME",
+	S0."GL",
+	S0."Sales Type",
+	S0."SalesLoc",
+	S0."SalesEmployee"
 
 Having
     SUM(A1."Quantity") > 0
@@ -123,6 +141,10 @@ Select
     , A6."Name" "Category"
     , A1."U_MODEL" "Model"
     , NULL
+    , NULL
+    , NULL
+    , NULL
+	, NULL
     , NULL
     , NULL
     , NULL
