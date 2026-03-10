@@ -3,10 +3,9 @@ declare DF date;
 DF := /* t0."DocDate" */ '[%0]';
 
 Select
-     *	
-   , CASE WHEN T0."IsSUD" = 1 THEN 0 ELSE (Select "AvgPrice" From OITM Where "ItemCode" = T0."ItemCode")  END AS "Unit LC"	
-   , CASE WHEN T0."IsSUD" = 1 THEN 0 ELSE (Select "AvgPrice" From OITM Where "ItemCode" = T0."ItemCode") * T0."Qty" END AS "Total LC"	
-   , CASE WHEN T0."IsSUD" = 1 THEN 0 ELSE (Select "Price" From ITM1 Where "ItemCode" = T0."ItemCode" AND "PriceList" = 2) END AS "SRP"	
+    * , CASE WHEN T0."IsSUD" = 1 THEN 0 ELSE (Select "AvgPrice" From OITM Where "ItemCode" = T0."ItemCode")  END AS "Unit LC"    
+   , CASE WHEN T0."IsSUD" = 1 THEN 0 ELSE (Select "AvgPrice" From OITM Where "ItemCode" = T0."ItemCode") * T0."Qty" END AS "Total LC"  
+   , CASE WHEN T0."IsSUD" = 1 THEN 0 ELSE (Select "Price" From ITM1 Where "ItemCode" = T0."ItemCode" AND "PriceList" = 2) END AS "SRP"  
    , T0."WhsCode" || ' ' || T0."WhsName" "Location"
 
 From
@@ -29,19 +28,19 @@ Select
     , A0."U_DRNO"
     , A0."U_INDATE"
     , A0."U_CUSTNAME"
-	, S0."GL"
-	, S0."Sales Type"
-	, S0."SalesLoc"
-	, S0."SalesEmployee"
-    , CASE WHEN A0."ItemCode" = 'SUD' THEN 1 ELSE  0  END AS "IsSUD"
-
-	,DAYS_BETWEEN(IFNULL(A0."U_INDATE", (SELECT "DocDate" FROM ODLN WHERE A0."U_DRNO" = "DocNum")), :DF) AS "Age",
-	,CASE WHEN DAYS_BETWEEN(IFNULL(A0."U_INDATE", (SELECT "DocDate" FROM ODLN WHERE A0."U_DRNO" = "DocNum")), :DF) <= 30 THEN A1."Quantity" ELSE 0 END AS "0-30_Days",
-	,CASE WHEN DAYS_BETWEEN(IFNULL(A0."U_INDATE", (SELECT "DocDate" FROM ODLN WHERE A0."U_DRNO" = "DocNum")), :DF) BETWEEN 31 AND 60 THEN A1."Quantity" ELSE 0 END AS "31-60_Days",
-	,CASE WHEN DAYS_BETWEEN(IFNULL(A0."U_INDATE", (SELECT "DocDate" FROM ODLN WHERE A0."U_DRNO" = "DocNum")), :DF) BETWEEN 61 AND 90 THEN A1."Quantity" ELSE 0 END AS "61-90_Days",
-	,CASE WHEN DAYS_BETWEEN(IFNULL(A0."U_INDATE", (SELECT "DocDate" FROM ODLN WHERE A0."U_DRNO" = "DocNum")), :DF) BETWEEN 91 AND 120 THEN A1."Quantity" ELSE 0 END AS "91-120_Days",
-	,CASE WHEN DAYS_BETWEEN(IFNULL(A0."U_INDATE", (SELECT "DocDate" FROM ODLN WHERE A0."U_DRNO" = "DocNum")), :DF) > 120 THEN A1."Quantity" ELSE 0 END AS "Over 120_Days",
-	
+    , S0."GL"
+    , S0."Sales Type"
+    , S0."SalesLoc"
+    , S0."SalesEmployee"
+    , CASE WHEN A0."ItemCode" = 'SUD' THEN 1 ELSE 0 END AS "IsSUD"
+    -- Aging Calculations with SUM and fixed commas
+    , DAYS_BETWEEN(IFNULL(A0."U_INDATE", (SELECT MAX("DocDate") FROM ODLN WHERE A0."U_DRNO" = CAST("DocNum" AS NVARCHAR))), :DF) AS "Age"
+    , SUM(CASE WHEN DAYS_BETWEEN(IFNULL(A0."U_INDATE", (SELECT MAX("DocDate") FROM ODLN WHERE A0."U_DRNO" = CAST("DocNum" AS NVARCHAR))), :DF) <= 30 THEN A1."Quantity" ELSE 0 END) AS "0-30_Days"
+    , SUM(CASE WHEN DAYS_BETWEEN(IFNULL(A0."U_INDATE", (SELECT MAX("DocDate") FROM ODLN WHERE A0."U_DRNO" = CAST("DocNum" AS NVARCHAR))), :DF) BETWEEN 31 AND 60 THEN A1."Quantity" ELSE 0 END) AS "31-60_Days"
+    , SUM(CASE WHEN DAYS_BETWEEN(IFNULL(A0."U_INDATE", (SELECT MAX("DocDate") FROM ODLN WHERE A0."U_DRNO" = CAST("DocNum" AS NVARCHAR))), :DF) BETWEEN 61 AND 90 THEN A1."Quantity" ELSE 0 END) AS "61-90_Days"
+    , SUM(CASE WHEN DAYS_BETWEEN(IFNULL(A0."U_INDATE", (SELECT MAX("DocDate") FROM ODLN WHERE A0."U_DRNO" = CAST("DocNum" AS NVARCHAR))), :DF) BETWEEN 91 AND 120 THEN A1."Quantity" ELSE 0 END) AS "91-120_Days"
+    , SUM(CASE WHEN DAYS_BETWEEN(IFNULL(A0."U_INDATE", (SELECT MAX("DocDate") FROM ODLN WHERE A0."U_DRNO" = CAST("DocNum" AS NVARCHAR))), :DF) > 120 THEN A1."Quantity" ELSE 0 END) AS "Over 120_Days"
+    
 From
     OSRN A0 
     INNER JOIN ITL1 A1 ON A0."AbsEntry" = A1."MdAbsEntry"
@@ -77,51 +76,29 @@ From
     LEFT JOIN "@BUSSLINE" A4 ON A3."U_BUSSLINE" = A4."Code"
     LEFT JOIN "@APPLINE" A5 ON A3."U_APPLINE" = A5."Code"
     LEFT JOIN "@CATEGORY_1" A6 ON A3."U_CATEGORY_1" = A6."Code"
-	--Invoice details--
-	LEFT JOIN ( SELECT T0."DocNum" "SI2", 
-	   T1."ItemCode" "Icode",
+    --Invoice details--
+    LEFT JOIN ( SELECT T0."DocNum" "SI2", 
+       T1."ItemCode" "Icode",
        T2."FormatCode" "GL",
        T2."AcctName" "Sales Type" ,
        T3."OcrName" "SalesLoc",
        T4."SlpName" "SalesEmployee"
-	   FROM OINV T0  INNER JOIN INV1 T1 ON T0."DocEntry" = T1."DocEntry"
-	                 INNER JOIN OACT T2 ON T1."AcctCode" = T2."AcctCode"
-	                 INNER JOIN OOCR T3 ON T1."OcrCode3" = T3."OcrCode"
-	                 INNER JOIN OSLP T4 ON T0."SlpCode" = T4."SlpCode") S0 ON A0."U_SINO" = S0."SI2" AND A0."U_ITEMCODE" = S0."Icode" 
-	
+       FROM OINV T0  INNER JOIN INV1 T1 ON T0."DocEntry" = T1."DocEntry"
+                     INNER JOIN OACT T2 ON T1."AcctCode" = T2."AcctCode"
+                     INNER JOIN OOCR T3 ON T1."OcrCode3" = T3."OcrCode"
+                     INNER JOIN OSLP T4 ON T0."SlpCode" = T4."SlpCode") S0 ON A0."U_SINO" = S0."SI2" AND A0."U_ITEMCODE" = S0."Icode" 
+    
 Where
     A0."InDate" <= :DF
     AND A0."ItemCode" = 'SUD'
     AND A3."ItmsGrpCod" = 156 
 
 Group By
-    A0."ItemCode", 
-    A3."ItemName", 
-    A0."InDate", 
-    A0."DistNumber", 
-    A0."AbsEntry", 
-    A2."LocCode",
-    C0."BinCode", 
-    CAST(A0."Notes" AS NVARCHAR), 
-    A4."Name", 
-    A5."Name", 
-    A6."Name",
-    A3."U_MODEL",
-    A0."U_SINO",
-    A0."U_ITEMCODE", 
-    D0."ItemName", 
-    A3."ItemCode", 
-    D0."BL", 
-    D0."AL", 
-    D0."CAT", 
-    D0."MOD",
-    A0."U_DRNO", 
-    A0."U_INDATE", 
-    A0."U_CUSTNAME",
-   S0."GL",
-   S0."Sales Type",
-   S0."SalesLoc",
-   S0."SalesEmployee"
+    A0."ItemCode", A3."ItemName", A0."InDate", A0."DistNumber", A0."AbsEntry", A2."LocCode",
+    C0."BinCode", CAST(A0."Notes" AS NVARCHAR), A4."Name", A5."Name", A6."Name",
+    A3."U_MODEL", A0."U_SINO", A0."U_ITEMCODE", D0."ItemName", A3."ItemCode", 
+    D0."BL", D0."AL", D0."CAT", D0."MOD", A0."U_DRNO", A0."U_INDATE", A0."U_CUSTNAME",
+    S0."GL", S0."Sales Type", S0."SalesLoc", S0."SalesEmployee"
 
 Having
     SUM(A1."Quantity") > 0
@@ -130,39 +107,19 @@ UNION ALL
 
 Select
     A0."ItemCode"
-    , NULL
-    , NULL
-    , NULL
-    , A0."Warehouse"
+    , NULL, NULL, NULL, A0."Warehouse"
     , (Select "WhsName" From OWHS Where "WhsCode" = A0."Warehouse") "WhsName"
-    , NULL
-    , SUM(A0."InQty" - A0."OutQty") "Qty"
-    , NULL
-    , A4."Name" "BussLine"
-    , A5."Name" "AppLine"
-    , A6."Name" "Category"
-    , A1."U_MODEL" "Model"
-    , NULL
-    , NULL
-    , NULL
-    , NULL
-   , NULL
-    , NULL
-    , NULL
-    , NULL
+    , NULL, SUM(A0."InQty" - A0."OutQty") "Qty"
+    , NULL, A4."Name" "BussLine", A5."Name" "AppLine", A6."Name" "Category"
+    , A1."U_MODEL" "Model", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
     , 0 AS "IsSUD"  
-    , NULL
-    , NULL
-    , NULL
-    , NULL
-    , NULL
-    , NULL
+    , NULL, NULL, NULL, NULL, NULL, NULL
 
 From
     OINM A0 
     INNER JOIN OITM A1 ON A0."ItemCode" = A1."ItemCode"
     LEFT JOIN "@BUSSLINE" A4 ON A1."U_BUSSLINE" = A4."Code"
-    LEFT JOIN "@APPLINE" A5 ON A1."U_APPLINE" = A5."Code" -- FIXED ALIAS HERE
+    LEFT JOIN "@APPLINE" A5 ON A1."U_APPLINE" = A5."Code" 
     LEFT JOIN "@CATEGORY_1" A6 ON A1."U_CATEGORY_1" = A6."Code"
 
 Where
@@ -172,12 +129,7 @@ Where
     AND A0."DocDate" <= :DF
 
 Group By
-    A0."ItemCode", 
-    A0."Warehouse", 
-    A4."Name", 
-    A5."Name", 
-    A6."Name", 
-    A1."U_MODEL" 
+    A0."ItemCode", A0."Warehouse", A4."Name", A5."Name", A6."Name", A1."U_MODEL" 
 
 Having 
     SUM(A0."InQty" - A0."OutQty") > 0
