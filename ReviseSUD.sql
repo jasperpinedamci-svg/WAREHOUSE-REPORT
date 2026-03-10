@@ -19,7 +19,7 @@ Select
     , A2."LocCode" "WhsCode"
     , (Select "WhsName" From OWHS Where "WhsCode" = A2."LocCode") "WhsName"
     , C0."BinCode" 
-    , NULL --, SUM(A1."Quantity") "Qty"
+    , SUM(A1."Quantity") "Qty"
     , CAST(A0."Notes" AS NVARCHAR) "Notes"
     , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."BL" ELSE A4."Name" END AS "BussLine"
     , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."AL" ELSE A5."Name" END AS "AppLine"
