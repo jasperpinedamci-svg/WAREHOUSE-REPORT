@@ -89,7 +89,7 @@ From
 	                 INNER JOIN OSLP T4 ON T0."SlpCode" = T4."SlpCode") S0 ON A0."U_SINO" = S0."SI2" AND A0."U_ITEMCODE" = S0."Icode" 
 	
 Where
-    A0."U_INDATE" <= :DF
+    A0."InDate" <= :DF
     AND A0."ItemCode" = 'SUD'
     AND A3."ItmsGrpCod" = 156 
 
