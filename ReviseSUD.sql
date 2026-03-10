@@ -77,19 +77,16 @@ From
     LEFT JOIN "@APPLINE" A5 ON A3."U_APPLINE" = A5."Code"
     LEFT JOIN "@CATEGORY_1" A6 ON A3."U_CATEGORY_1" = A6."Code"
 	--Invoice details--
-	LEFT JOIN ( 
-    SELECT 
-         T0."DocNum" "SI2" 
-        ,T1."ItemCode" "Icode"
-        ,T2."FormatCode" "GL"
-        ,T2."AcctName" "Sales Type"
-        ,T3."OcrName" "SalesLoc"
-        ,T4."SlpName" "SalesEmployee"
-    FROM OINV T0  
-    INNER JOIN INV1 T1 ON T0."DocEntry" = T1."DocEntry"
-    INNER JOIN OACT T2 ON T1."AcctCode" = T2."AcctCode"
-    INNER JOIN OOCR T3 ON T1."OcrCode3" = T3."OcrCode"
-    INNER JOIN OSLP T4 ON T0."SlpCode" = T4."SlpCode") S0 ON A0."U_SINO" = S0."SI2" AND A0."U_ITEMCODE" = S0."Icode"
+	LEFT JOIN ( SELECT T0."DocNum" "SI2", 
+	   T1."ItemCode" "Icode",
+       T2."FormatCode" "GL",
+       T2."AcctName" "Sales Type" ,
+       T3."OcrName" "SalesLoc",
+       T4."SlpName" "SalesEmployee"
+	   FROM OINV T0  INNER JOIN INV1 T1 ON T0."DocEntry" = T1."DocEntry"
+	                 INNER JOIN OACT T2 ON T1."AcctCode" = T2."AcctCode"
+	                 INNER JOIN OOCR T3 ON T1."OcrCode3" = T3."OcrCode"
+	                 INNER JOIN OSLP T4 ON T0."SlpCode" = T4."SlpCode") S0 ON A0."U_SINO" = S0."SI2" AND A0."U_ITEMCODE" = S0."Icode" 
 	
 Where
     A0."InDate" <= :DF
@@ -120,10 +117,10 @@ Group By
     A0."U_DRNO", 
     A0."U_INDATE", 
     A0."U_CUSTNAME",
-	S0."GL",
-	S0."Sales Type",
-	S0."SalesLoc",
-	S0."SalesEmployee"
+   S0."GL",
+   S0."Sales Type",
+   S0."SalesLoc",
+   S0."SalesEmployee"
 
 Having
     SUM(A1."Quantity") > 0
@@ -148,7 +145,7 @@ Select
     , NULL
     , NULL
     , NULL
-	, NULL
+   , NULL
     , NULL
     , NULL
     , NULL
