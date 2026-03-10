@@ -79,12 +79,12 @@ From
 	--Invoice details--
 	LEFT JOIN ( 
     SELECT 
-        T0."DocNum" "SI2", 
-        T1."ItemCode" "Icode", -- Added missing comma here
-        T2."FormatCode" "GL",
-        T2."AcctName" "Sales Type",
-        T3."OcrName" "SalesLoc",
-        T4."SlpName" "SalesEmployee"
+         T0."DocNum" "SI2" 
+        ,T1."ItemCode" "Icode"
+        ,T2."FormatCode" "GL"
+        ,T2."AcctName" "Sales Type"
+        ,T3."OcrName" "SalesLoc"
+        ,T4."SlpName" "SalesEmployee"
     FROM OINV T0  
     INNER JOIN INV1 T1 ON T0."DocEntry" = T1."DocEntry"
     INNER JOIN OACT T2 ON T1."AcctCode" = T2."AcctCode"
