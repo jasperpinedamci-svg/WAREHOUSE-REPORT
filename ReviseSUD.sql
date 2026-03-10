@@ -78,7 +78,7 @@ From
     LEFT JOIN "@CATEGORY_1" A6 ON A3."U_CATEGORY_1" = A6."Code"
 	--Invoice details--
 	LEFT JOIN ( SELECT T0."DocNum" "SI2", 
-	   T1."ItemCode" "Icode"
+	   T1."ItemCode" "Icode",
        T2."FormatCode" "GL",
        T2."AcctName" "Sales Type" ,
        T3."OcrName" "SalesLoc",
