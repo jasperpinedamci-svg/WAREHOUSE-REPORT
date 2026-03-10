@@ -33,7 +33,7 @@ Select
 	, S0."Sales Type"
 	, S0."SalesLoc"
 	, S0."SalesEmployee"
-    , CASE WHEN A0."ItemCode" = 'SUD' THEN 1 ELSE  0  END AS "Qty"
+    , CASE WHEN A0."ItemCode" = 'SUD' THEN 1 ELSE  0  END AS "IsSUD"
     , DAYS_BETWEEN(A0."InDate", :DF) AS "AGE_Days"  
     , CASE WHEN DAYS_BETWEEN(A0."U_INDATE", :DF ) BETWEEN 0 AND 30 THEN 1 ELSE 0 END AS "0-30_Days"
     , CASE WHEN DAYS_BETWEEN(A0."U_INDATE", :DF ) BETWEEN 31 AND 60 THEN 1 ELSE 0 END AS "31-60_Days"
