@@ -73,7 +73,7 @@ From
     LEFT JOIN "@CATEGORY_1" A6 ON A3."U_CATEGORY_1" = A6."Code"
 
 Where
-    A0."InDate" <= :DF
+    A2."DocDate" <= :DF
     AND A3."ItmsGrpCod" = 156 
 
 Group By
