@@ -107,7 +107,7 @@ UNION ALL
 
 Select
     A0."ItemCode"
-    , NULL
+    , A1."ItemName"
     , NULL
     , NULL
     , A0."Warehouse"
@@ -148,7 +148,8 @@ Group By
     A4."Name", 
     A5."Name", 
     A6."Name", 
-    A1."U_MODEL" 
+    A1."U_MODEL",
+	A1."ItemName"
 
 Having 
     SUM(A0."InQty" - A0."OutQty") > 0
