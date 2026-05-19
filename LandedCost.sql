@@ -16,13 +16,11 @@ LEFT JOIN (
     FROM IPF1 A0
     INNER JOIN OIPF A1 ON A0."DocEntry" = A1."DocEntry"
     WHERE A1."Canceled" = 'N'
-      AND A0."DocEntry" = (
-          SELECT MAX(B0."DocEntry") 
-          FROM IPF1 B0
-          INNER JOIN OIPF B1 ON B0."DocEntry" = B1."DocEntry"
-          WHERE B1."Canceled" = 'N' 
-            AND B0."ItemCode" = A0."ItemCode"
-      )
-) L0 ON I0."ItemCode" = L0."ItemCode"
+      AND A0."DocEntry" = (SELECT MAX(B0."DocEntry") 
+                           FROM IPF1 B0 INNER JOIN OIPF B1 ON B0."DocEntry" = B1."DocEntry"
+                           WHERE B1."Canceled" = 'N' 
+                           AND B0."ItemCode" = A0."ItemCode")
+    ) L0 ON I0."ItemCode" = L0."ItemCode"
+
 WHERE I0."InvntItem" = 'Y' AND I0."ItmsGrpCod" = '156'
-ORDER BY I0."ItemCode";
+ORDER BY I0."ItemCode"
