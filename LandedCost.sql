@@ -5,7 +5,8 @@ SELECT
     L0."DocDate" AS "Last Landed Cost Date",
     COALESCE(L0."PriceAtWH", 0) AS "Last Landed Cost",
     I0."AvgPrice" AS "SAP Average Cost",
-    (select MAX("DocDate") from oinm where "ItemCode" = I0."ItemCode" and "TransType" = '20') "Lst Rcpt Date"
+    (select MAX("DocDate") from oinm where "ItemCode" = I0."ItemCode" and "TransType" = '20') "Lst Rcpt Date",
+    case when I0."validFor" = 'N' then 'Inactive' else 'Active' end "Status"
 
 FROM OITM I0
 LEFT JOIN (
@@ -25,5 +26,7 @@ LEFT JOIN (
             AND B0."ItemCode" = A0."ItemCode"
       )
 ) L0 ON I0."ItemCode" = L0."ItemCode"
-WHERE I0."InvntItem" = 'Y' AND I0."ItmsGrpCod" = '156'
+WHERE I0."InvntItem" = 'Y' 
+      AND I0."ItmsGrpCod" = '156'
+      AND I0."validFor" <> 'N'
 ORDER BY I0."ItemCode";
