@@ -1,7 +1,6 @@
 SELECT 
     I0."ItemCode" AS "SKU",
     I0."ItemName" AS "Description",
-    I0."OnHand" "In Stock",
     L0."DocNum" AS "Last Landed Cost No.",
     L0."DocDate" AS "Last Landed Cost Date",
     COALESCE(L0."PriceAtWH", 0) AS "Last Landed Cost",
