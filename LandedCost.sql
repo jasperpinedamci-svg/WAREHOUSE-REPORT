@@ -7,7 +7,6 @@ SELECT
     COALESCE(L0."PriceAtWH", 0) AS "Last Landed Cost",
     I0."AvgPrice" AS "SAP Average Cost",
     (select MAX("DocDate") from oinm where "ItemCode" = I0."ItemCode" and "TransType" = '20') "Lst Rcpt Date",
-    (select MAX("DocNum") from oinm where "ItemCode" = I0."ItemCode" and "TransType" = '20') "Last GRPO No",
     case when I0."validFor" = 'N' then 'Inactive' else 'Active' end "Status"
 
 FROM OITM I0
