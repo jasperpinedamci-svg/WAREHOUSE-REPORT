@@ -1,8 +1,8 @@
 SELECT 
     I0."ItemCode" AS "SKU",
     I0."ItemName" AS "Description",
-    L0."DocNum" AS "Last Landed Cost No.",
-    L0."DocDate" AS "Last Landed Cost Date",
+    --L0."DocNum" AS "Last Landed Cost No.",
+    --L0."DocDate" AS "Last Landed Cost Date",
     COALESCE(L0."PriceAtWH", 0) AS "Last Landed Cost",
     I0."AvgPrice" AS "SAP Average Cost",
     (select MAX("DocDate") from oinm where "ItemCode" = I0."ItemCode" and "TransType" = '20') "Lst Rcpt Date",
