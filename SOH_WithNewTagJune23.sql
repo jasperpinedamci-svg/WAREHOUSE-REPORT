@@ -21,10 +21,10 @@ Select
     , C0."BinCode" 
     , SUM(A1."Quantity") "Qty"
     , CAST(A0."Notes" AS NVARCHAR) "Notes"
-    , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."BL" ELSE A4."Name" END AS "BussLine"
-    , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."AL" ELSE A5."Name" END AS "AppLine"
-    , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."CAT" ELSE A6."Name" END AS "Category"
-    , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."MOD" ELSE A3."U_MODEL" END AS "Model"
+    --, CASE WHEN A3."ItemCode" = 'SUD' THEN D0."BL" ELSE A4."Name" END AS "BussLine"
+    --, CASE WHEN A3."ItemCode" = 'SUD' THEN D0."AL" ELSE A5."Name" END AS "AppLine"
+    --, CASE WHEN A3."ItemCode" = 'SUD' THEN D0."CAT" ELSE A6."Name" END AS "Category"
+    --, CASE WHEN A3."ItemCode" = 'SUD' THEN D0."MOD" ELSE A3."U_MODEL" END AS "Model"
   --New Tagging
     , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."NBL" ELSE A7."Name" END AS "New_BussLine"
     , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."NAL" ELSE A9."Name" END AS "New_AppLine"
@@ -155,9 +155,9 @@ Select
     , NULL
     , SUM(A0."InQty" - A0."OutQty") "Qty"
     , NULL
-    , A4."Name" "BussLine"
-    , A5."Name" "AppLine"
-    , A6."Name" "Category"
+    --, A4."Name" "BussLine"
+    --, A5."Name" "AppLine"
+    --, A6."Name" "Category"
   
     , A7."Name" "New_BusLine"
     , A9."Name" "New_ApLine"
@@ -166,7 +166,7 @@ Select
     , A12."Name" "New_ItemStat"
     , A13."Name" "New_Color"
   
-    , A1."U_MODEL" "Model"
+    --, A1."U_MODEL" "Model"
     , NULL
     , NULL
     , NULL
