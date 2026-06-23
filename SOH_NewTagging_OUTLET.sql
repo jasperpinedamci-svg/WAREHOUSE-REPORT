@@ -77,7 +77,7 @@ From
                  LEFT JOIN "@PRODLINE" B7 on B1."U_PRODLINE" = B7."Code"
                  LEFT JOIN "@DESLINE" B8 on B1."U_DESLINE" = B8."Code"
                  LEFT JOIN "@ITEMSTAT" B9 on B1."U_ITEMSTAT" = B9."Code"
-                 LEFT JOIN "@COL" B10 on B1."U_COL" = B10."Code"
+                 LEFT JOIN "@COLOR" B10 on B1."U_COLOR" = B10."Code"
                  
     ) D0 ON D0."SnAbsEntry" = A0."AbsEntry"
     
@@ -90,11 +90,11 @@ From
     LEFT JOIN "@PRODLINE" A10 on A3."U_PRODLINE" = A10."Code"
     LEFT JOIN "@DESLINE" A11 on A3."U_DESLINE" = A11."Code"
     LEFT JOIN "@ITEMSTAT" A12 on A3."U_ITEMSTAT" = A12."Code"
-    LEFT JOIN "@COL" A13 on A3."U_COL" = A13."Code"
+    LEFT JOIN "@COLOR" A13 on A3."U_COLOR" = A13."Code"
   
 
 Where
-    A2."DocDate" <= '20260617'
+    A2."DocDate" <= '20260623'
     AND A2."LocCode" IN ('FGMALA-B', 'FGSOLT-A')
     AND A3."ItmsGrpCod" = 156 
 
@@ -182,13 +182,13 @@ From
     LEFT JOIN "@PRODLINE" A10 on A1."U_PRODLINE" = A10."Code"
     LEFT JOIN "@DESLINE" A11 on A1."U_DESLINE" = A11."Code"
     LEFT JOIN "@ITEMSTAT" A12 on A1."U_ITEMSTAT" = A12."Code"
-    LEFT JOIN "@COL" A13 on A1."U_COL" = A13."Code"
+    LEFT JOIN "@COLOR" A13 on A1."U_COLOR" = A13."Code"
 
 Where
     A1."ManSerNum" = 'N'
     AND A1."ItmsGrpCod" = 156
     AND A0."Warehouse" IN ('FGMALA-B', 'FGSOLT-A')
-    AND A0."DocDate" <= '20260617'
+    AND A0."DocDate" <= '20260623'
 
 Group By
     A0."ItemCode", 
