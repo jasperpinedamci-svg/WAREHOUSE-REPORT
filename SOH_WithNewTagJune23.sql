@@ -1,3 +1,7 @@
+/* select from oinm t0 */
+declare DF date;
+DF := /* t0."DocDate" */ '[%0]';
+
 Select
       *	
     , CASE WHEN T0."IsSUD" = 1 THEN 0 ELSE (Select "AvgPrice" From OITM Where "ItemCode" = T0."ItemCode")  END AS "Unit LC"	
@@ -94,8 +98,7 @@ From
   
 
 Where
-    A2."DocDate" <= '20260623'
-    AND A2."LocCode" IN ('FGMALA-B', 'FGSOLT-A')
+    A2."DocDate" <= :DF
     AND A3."ItmsGrpCod" = 156 
 
 Group By
@@ -187,8 +190,7 @@ From
 Where
     A1."ManSerNum" = 'N'
     AND A1."ItmsGrpCod" = 156
-    AND A0."Warehouse" IN ('FGMALA-B', 'FGSOLT-A')
-    AND A0."DocDate" <= '20260623'
+    AND A0."DocDate" <= :DF
 
 Group By
     A0."ItemCode", 
