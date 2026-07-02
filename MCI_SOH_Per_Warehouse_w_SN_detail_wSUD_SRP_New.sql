@@ -101,9 +101,9 @@ UNION ALL
 
 Select
 	A0."ItemCode"
-  , NULL
+    , NULL
 	, NULL
-  , NULL
+    , NULL
 	, A0."Warehouse"
 	, (Select "WhsName" From OWHS Where "WhsCode" = A0."Warehouse") "WhsName"
 	, NULL
@@ -113,14 +113,15 @@ Select
 	, A5."Name" "AppLine"
 	, A6."Name" "Category"
 	, A1."U_MODEL" "Model"
-  , NULL
-	, NULL
-  , NULL
+    , NULL
+    , NULL
+    , NULL
 From
 	OINM A0 INNER JOIN OITM A1 ON A0."ItemCode" = A1."ItemCode"
-	LEFT JOIN "@BUSSLINE" A4 ON A1."U_BUSSLINE" = A4."Code"
-	LEFT JOIN "@APPLINE" A5 ON A1."U_APPLINE" = A5."Code"
-	LEFT JOIN "@CATEGORY_1" A6 ON A1."U_CATEGORY_1" = A6."Code"
+	LEFT JOIN "@BUSLINE" A4 ON A1."U_BUSLINE" = A4."Code"
+	LEFT JOIN "@APLINE" A5 ON A1."U_APLINE" = A5."Code"
+	LEFT JOIN "@PRODLINE" A6 ON A1."U_PRODLINE" = A6."Code"
+	LEFT JOIN "@ITEMSTAT" A7 ON A1."U_ITEMSTAT" = A7."Code"
 Where
 	A1."ManSerNum" = 'N'
 	AND A1."ItmsGrpCod" = 156 --> FINISHED GOODS
@@ -131,7 +132,7 @@ Group By
 	, A4."Name"
 	, A5."Name" 
 	, A6."Name" 
-	, A1."U_MODEL" 
+	, A7."Name" 
 Having 
 	SUM(A0."InQty" - A0."OutQty") > 0
 ) T0
