@@ -25,7 +25,7 @@ Select
              , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."BL" ELSE A4."Name" END AS "BussLine"
              , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."AL" ELSE A5."Name" END AS "AppLine"
              , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."PL" ELSE A6."Name" END AS "Prodline"
-             , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."IS" ELSE A3."Name" END AS "Model"
+             , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."IS" ELSE A3."Name" END AS "ItemStatus"
              , A0."U_DRNO"
              , A0."U_INDATE"
              , A0."U_CUSTNAME"
