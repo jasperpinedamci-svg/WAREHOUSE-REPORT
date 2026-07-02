@@ -24,8 +24,8 @@ Select
 	, CAST(A0."Notes" AS NVARCHAR) "Notes"
              , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."BL" ELSE A4."Name" END AS "BussLine"
              , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."AL" ELSE A5."Name" END AS "AppLine"
-             , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."CAT" ELSE A6."Name" END AS "Category"
-             , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."MOD" ELSE A3."U_MODEL" END AS "Model"
+             , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."PL" ELSE A6."Name" END AS "Prodline"
+             , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."IS" ELSE A3."Name" END AS "Model"
              , A0."U_DRNO"
              , A0."U_INDATE"
              , A0."U_CUSTNAME"
@@ -49,22 +49,24 @@ From
 	LEFT JOIN OITM A3 ON A0."ItemCode" = A3."ItemCode"
 
   LEFT JOIN (SELECT DISTINCT		
-            B1."ItemName",
-		        B2."Name" "BL",
+              B1."ItemName",
+		      B2."Name" "BL",
 	          B3."Name" "AL",
-	          B4."Name"  "CAT",
-	          B1."U_MODEL" "MOD",		
-            A0."AbsEntry" AS "SnAbsEntry"	
+	          B4."Name"  "PL",
+	          B5."Name" "IS",		
+              A0."AbsEntry" AS "SnAbsEntry"	
                                    FROM		
                                    OSRN A0 INNER JOIN OITM B1 ON A0."U_ITEMCODE" = B1."ItemCode"
-                                   LEFT JOIN "@BUSSLINE" B2 ON B1."U_BUSSLINE" = B2."Code"
-	                                 LEFT JOIN "@APPLINE" B3 ON B1."U_APPLINE" = B3."Code"
-	                                 LEFT JOIN "@CATEGORY_1" B4 ON B1."U_CATEGORY_1" = B4."Code"
+                                     LEFT JOIN "@BUSLINE" B2 ON B1."U_BUSLINE" = B2."Code"
+	                                 LEFT JOIN "@APLINE" B3 ON B1."U_APLINE" = B3."Code"
+	                                 LEFT JOIN "@PRODLINE" B4 ON B1."U_PRODLINE" = B4."Code"
+	                                 LEFT JOIN "@ITEMSTAT" B5 ON B1."U_ITEMSTAT" = B5."Code"
                                     ) D0 ON D0."SnAbsEntry" = A0."AbsEntry"
 
-	LEFT JOIN "@BUSSLINE" A4 ON A3."U_BUSSLINE" = A4."Code"
-	LEFT JOIN "@APPLINE" A5 ON A3."U_APPLINE" = A5."Code"
-	LEFT JOIN "@CATEGORY_1" A6 ON A3."U_CATEGORY_1" = A6."Code"
+	LEFT JOIN "@BUSLINE" A4 ON A3."U_BUSLINE" = A4."Code"
+	LEFT JOIN "@APLINE" A5 ON A3."U_APLINE" = A5."Code"
+	LEFT JOIN "@PRODLINE" A6 ON A3."U_PRODLINE" = A6."Code"
+	LEFT JOIN "@ITEMSTAT" A7 ON A3."U_ITEMSTAT" = A7."Code"
 Where
 	A2."DocDate" <= :DF
 	AND A3."ItmsGrpCod" = 156 --> FINISHED GOODS
