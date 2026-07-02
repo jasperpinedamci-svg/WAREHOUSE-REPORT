@@ -27,8 +27,8 @@ Select
     --, CASE WHEN A3."ItemCode" = 'SUD' THEN D0."MOD" ELSE A3."U_MODEL" END AS "Model"
   --New Tagging
     , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."NBL" ELSE A7."Name" END AS "New_BussLine"
-    , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."NAL" ELSE A9."Name" END AS "New_AppLine"
     , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."PROD" ELSE A10."Name" END AS "New_ProdLine"
+    , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."NAL" ELSE A9."Name" END AS "New_AppLine"
     --, CASE WHEN A3."ItemCode" = 'SUD' THEN D0."DES" ELSE A11."Name" END AS "New_Des"
     , CASE WHEN A3."ItemCode" = 'SUD' THEN D0."STAT" ELSE A12."Name" END AS "New_ItemStat"
     --, CASE WHEN A3."ItemCode" = 'SUD' THEN D0."COL" ELSE A13."Name" END AS "New_Color"
@@ -160,8 +160,8 @@ Select
     --, A6."Name" "Category"
   
     , A7."Name" "New_BusLine"
-    , A9."Name" "New_ApLine"
     , A10."Name" "New_ProdLine"
+    , A9."Name" "New_ApLine"
     --, A11."Name" "New_DesLine"
     , A12."Name" "New_ItemStat"
     --, A13."Name" "New_Color"
