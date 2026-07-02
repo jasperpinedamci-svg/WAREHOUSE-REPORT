@@ -162,9 +162,9 @@ Select
     , A7."Name" "New_BusLine"
     , A9."Name" "New_ApLine"
     , A10."Name" "New_ProdLine"
-    , A11."Name" "New_DesLine"
+    --, A11."Name" "New_DesLine"
     , A12."Name" "New_ItemStat"
-    , A13."Name" "New_Color"
+    --, A13."Name" "New_Color"
   
     --, A1."U_MODEL" "Model"
     , NULL
